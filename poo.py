@@ -1,6 +1,10 @@
 #!/usr/bin/python2.7
 #coding:utf-8
 
+#AUTEUR : Aurélien REY
+#GROUPE : 4
+#OBJECTIF : Découverte de la Programmation Orientée Objets (POO)
+
 from math import *
 import os
 
@@ -25,43 +29,43 @@ class Point :
 		self.z = input("z = ")
 		self.name = raw_input("Nom : ")
 
-	def input(self) :
-		value = raw_input("Coordonnées N(x, y, z) : ")
+	# def input(self) :
+	# 	value = raw_input("Coordonnées N(x, y, z) : ")
 
-		if not "(" in value or not ")" in value :
-			print "Erreur de mise en forme (parenthèse manquante)"
-			return
+	# 	if not "(" in value or not ")" in value :
+	# 		print "Erreur de mise en forme (parenthèse manquante)"
+	# 		return
 
-		if value.index("(") > value.index(")") :
-			print "Erreur de mise en forme (place des parenthèses)"
-			return
+	# 	if value.index("(") > value.index(")") :
+	# 		print "Erreur de mise en forme (place des parenthèses)"
+	# 		return
 
-		if len(Util.stringIndexesOf(value, "(")) > 1 or len(Util.stringIndexesOf(value, ")")) > 1 :
-			print "Erreur de mise en forme (nombre de parenthèses)"
-			return
+	# 	if len(Util.stringIndexesOf(value, "(")) > 1 or len(Util.stringIndexesOf(value, ")")) > 1 :
+	# 		print "Erreur de mise en forme (nombre de parenthèses)"
+	# 		return
 
-		self.name = value.split("(")[0]
+	# 	self.name = value.split("(")[0]
 
-		value = value[len(self.name):]
+	# 	value = value[len(self.name):]
 
-		value = value.replace("(", "")
-		value = value.replace(")", "")
-		value = value.replace(" ", "")
+	# 	value = value.replace("(", "")
+	# 	value = value.replace(")", "")
+	# 	value = value.replace(" ", "")
 
-		values = value.split(",")
+	# 	values = value.split(",")
 
-		if len(values) == 1 :
-			self.x = float(values[0])
-			self.y = float(values[0])
-			self.z = float(values[0])
-			return
-		elif len(values) != 3 :
-			print "N'y a t-il pas un problème ?"
-			return
+	# 	if len(values) == 1 :
+	# 		self.x = float(values[0])
+	# 		self.y = float(values[0])
+	# 		self.z = float(values[0])
+	# 		return
+	# 	elif len(values) != 3 :
+	# 		print "N'y a t-il pas un problème ?"
+	# 		return
 
-		self.x = float(values[0])
-		self.y = float(values[1])
-		self.z = float(values[2])
+	# 	self.x = float(values[0])
+	# 	self.y = float(values[1])
+	# 	self.z = float(values[2])
 
 	def inf_or_equal(self, p) :
 		if self.x < p.x :
@@ -115,9 +119,9 @@ class Collection :
 		x, y, z = 0, 0, 0
 
 		for p in self.points :
-			x += p.x
-			y += p.y
-			z += p.z
+			x += p.x + 0.0
+			y += p.y + 0.0
+			z += p.z + 0.0
 
 		size = len(self.points)
 
@@ -186,98 +190,71 @@ class Collection :
 
 		self.points = list(l3)
 
-#-----
+n = input("[1ère collection] Combien voulez vous créer de points ? ")
+c = Collection()
 
-class Util :
-	@staticmethod
-	def stringIndexesOf(string, char) :
-		pos = list()
+for i in range(n) :
+	p = Point()
+	p.inputs()
+	c.add(p)
+	print ""
 
-		for i in range(len(string)) :
-			if string[i] == char :
-				pos.append(i)
+print ""
 
-		return pos
+c.printer()
 
-	@staticmethod
-	def clear() :
-		os.system("clear")
+print ""
 
-#-----
+print "Le centre de gravité est placé aux coordonnées",
+c.centerOfGravity().printer()
 
-class Vector2D :
-	def __init__(self, x, y) :
-		self.x = x
-		self.y = y
+print ""
 
-	def normalize(self) :
-		return sqrt(self.getX() ** 2 + self.getY() ** 2)
+print "Classement de la collection : "
+c.sort()
 
-	def getX(self) :
-		return self.x
+print ""
 
-	def getY(self) :
-		return self.y
+c.printer()
 
-	def printer(self) :
-		print "({}, {})".format(self.getX(), self.getY())
+n = input("[2nde collection] Combien voulez vous créer de points ? ")
+c1 = Collection()
 
-	@staticmethod
-	def addVectors(v) :
-		x, y = 0, 0
+for i in range(n) :
+	p = Point()
+	p.inputs()
+	c1.add(p)
+	print ""
 
-		for i in v :
-			x += i.getX()
-			y += i.getY()
+print ""
 
-		return Vector2D(x, y)
+c1.printer()
 
-	def translate(self, p) :
-		np = Point()
+print ""
 
-		np.setPosition(p.x + self.getX(), p.y + self.getY(), 0)
+print "Le centre de gravité est placé aux coordonnées",
+c1.centerOfGravity().printer()
 
-		return np
+print ""
 
-	def equals(self, v) :
-		o = Point()
-		p1 = self.translate(o)
-		p2 = v.translate(o)
+print "Test de concaténation des deux collections : "
+c.extends(c1)
 
-		p1.printer()
-		p2.printer()
+print ""
 
-		print p1.range(p2)
+if not c1.sorted() :
+	print "Rangement de la collection numéro deux"
+	c1.sort()
 
-		if p1.range(p2) < 0.5 :
-			return 1
+	print ""
 
-		return 0
+	print "Test de concaténation des deux collections : "
+	c.extends(c1)
 
-#-----
+	print ""
 
-class Character :
-	def __init__(self, v) :
-		self.vectors = list(v)
+c.printer()
 
-	def setChar(self, char) :
-		self.value = char
+print "Fin du programme :)"
 
-	def getValue(self) :
-		return Vector2D.addVectors(self.vectors)
-
-#-----
-
-Util.clear()
-
-one = Character([Vector2D(1, 1), Vector2D(0, -3)])
-one.setChar("1")
-
-test = Character([Vector2D(0.94, 0.98), Vector2D(-0.02, -2.8)])
-
-one.getValue().printer()
-test.getValue().printer()
-
-print one.getValue().equals(test.getValue())
-
-print 
+input()
