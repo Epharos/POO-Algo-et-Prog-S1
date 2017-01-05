@@ -16,7 +16,7 @@ class Date :
 		self.y = int(values[2])
 
 	@staticmethod
-	def format(date) :
+	def formatDate(date) :
 		d = Date()
 		values = date.split("/")
 
@@ -76,9 +76,10 @@ class Alimentary_Product :
 		self.productionDate = Date()
 		self.expirationDate = Date()
 		self.ingredients = list()
+		self.productionPlace = "Unknown"
 
 	def printer(self) :
-		print "> Nom : {}\n> Marque : {}\n> Référence : {}\n> Production : {}\n> Expiration : {}\n".format(self.name, self.brand, self.ref, self.productionDate, self.expirationDate)
+		print "> Nom : {}\n> Marque : {}\n> Référence : {}\n> Production : {}\n> Expiration : {}\n> Lieu de production : {}\n".format(self.name, self.brand, self.ref, self.productionDate, self.expirationDate, self.productionPlace)
 		print "> Ingrédients :"
 
 		for v in self.ingredients :
@@ -92,6 +93,7 @@ class Alimentary_Product :
 		self.ref = input("Référence : ")
 		self.productionDate.scan()
 		self.expirationDate.scan()
+		self.productionPlace = raw_input("Lieu de production : ")
 		n = input("Combien y a t-il d'ingrédients ? ")
 
 		for i in range(n) :
@@ -160,16 +162,29 @@ class Store :
 		l = ProductList()
 		if type(toSell) == str :
 			l = self.searchByName(toSell)
-		elif type(toSell) == int :
+		elif type(toSell) == int or type(toSell) == long :
 			l = self.searchByRef(toSell)
 		else :
 			print "Votre demande est impossible :o"
 			return
 
 		if len(l) > 1 :
-			print "Précisez votre vente ..."
+			print "Voulez-vous vraiment acheter {} produits ?".format(len(l))
+
+			r = raw_input("O = Oui ; N = Non : ")
+			while r.lower() != 'o' and r.lower() != 'n' :
+				r = raw_input("O = Oui ; N = Non : ")
+
+			if r.lower() == 'o' :
+				for e in l :
+					self.products.remove(e)
+			else :
+				print "Soyez plus précis la prochaine fois ;)"
+				return
 		else :
 			self.products.remove(l[0])
+
+		print "Merci de votre achat !"
 
 	def removeExpired(self, date) :
 		for v in self.products :
@@ -192,75 +207,49 @@ class ProductList(list) :
 			print "\n"
 
 class FileReader :
-	def __init__(self) :
-		self.products = open("objects.txt", "r")
-		self.lines = self.file.readlines()
-
 	def getProducts(self) :
 		l = ProductList()
 
-		ingredients = open("ingredient.txt", "r")
-		lines2 = ingredients.readlines()
+		file = open("products.txt", "r")
+		lines = file.readlines()
 
-		for v in self.lines :
+		for v in lines :
+			if v[0] == "!" or len(v) == 1 :
+				continue
+
 			p = Alimentary_Product()
 			a = v.split(",")
 			p.name = a[0]
 			p.brand = a[1]
 			p.ref = int(a[2])
-			p.productionDate = Date.format(a[3])
-			p.expirationDate = Date.format(a[4])
+			p.productionDate = Date.formatDate(a[3])
+			p.expirationDate = Date.formatDate(a[4])
+			p.productionPlace = a[5]
+			b = a[6].split(";")
 
+			if len(b) % 3 != 0 :
+				print "Une erreur est survenue sur les ingrédients"
+				file.close()
+				return
 
+			for i in range(len(b) / 3) :
+				p.ingredients.append(Ingredient(b[3 * i], b[3 * i + 1], b[3 * i + 2]))
 
-p1 = Alimentary_Product()
-p2 = Alimentary_Product()
-p3 = Alimentary_Product()
-p4 = Alimentary_Product()
+			print "Lecture finie : "
+			p.printer()
+			l.append(p)
+			print "\n\n"
 
-p1.name = "Brownie"
-p1.brand = "Isa"
-p1.ref = 122211
-p1.productionDate = Date(10, 01, 2006)
-p1.expirationDate = Date(10, 01, 2007)
-p1.ingredients.append(Ingredient("chocolat", 600, "g"))
-p1.ingredients.append(Ingredient("oeufs", 4, ""))
-p1.ingredients.append(Ingredient("farine", 200, "g"))
-p1.ingredients.append(Ingredient("beurre", 250, "g"))
+		return l
 
-p2.name = "Soupe de légume"
-p2.brand = "Bonne maman"
-p2.ref = 157948
-p2.productionDate = Date(1, 1, 2015)
-p2.expirationDate = Date(21, 12, 2017)
-p2.ingredients.append(Ingredient("eau", 50, "dL"))
-p2.ingredients.append(Ingredient("pommes de terre", 5, ""))
-p2.ingredients.append(Ingredient("carottes", 3, ""))
-p2.ingredients.append(Ingredient("courgettes", 4, ""))
-
-p3.name = "Soupe de poisson"
-p3.brand = "Bonne maman"
-p3.ref = 24550
-p3.productionDate = Date(10, 12, 2016)
-p3.expirationDate = Date(10, 06, 2026)
-p3.ingredients.append(Ingredient("poisson", 1, "kg"))
-p3.ingredients.append(Ingredient("eau", 40, "cL"))
-
-p4.name = "Crêpes"
-p4.brand = "Harrys"
-p4.ref = 1702
-p4.productionDate = Date(14, 12, 2016)
-p4.expirationDate = Date(16, 12, 2016)
-p4.ingredients.append(Ingredient("oeufs", 2, ""))
-p4.ingredients.append(Ingredient("farine", 300, "g"))
-p4.ingredients.append(Ingredient("beurre", 270, "g"))
-
-today = Date(15, 12, 2016)
+today = Date(15, 12, 2016) #Pensez à changer cette date !
 
 store = Store()
-store.add(p1)
-store.add(p2)
-store.add(p3)
-store.add(p4)
+fr = FileReader()
 
-print Date.format("12/12/2012")
+for e in fr.getProducts() :
+	store.add(e)
+
+store.sell(raw_input("Que voulez-vous acheter ? "))
+
+store.printer()

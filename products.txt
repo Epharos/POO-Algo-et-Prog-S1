@@ -1,0 +1,23 @@
+! Bonjour :)
+! Ce fichier est prévu pour ajouter des produits alimentaires facilement
+! Chaque ligne correspond à un produit
+! Les lignes commençant par un "!" sont des commentaires et ne sont pas lues par le programme
+
+! Pattern :
+! Nom du produit,Marque,Référence,Date de production,Date d'expiration,[Ingredients]
+
+! La référence doit être un entier
+! Les dates doivent être au format "JJ/MM/AAAA"
+! Les ingrédients se présentent sous la forme suivante :
+! Ingredient1;Quantité1;Unité1;...;IngredientN;QuantitéN;UnitéN
+
+! Ci-dessous, 4 exemples d'utilisation :
+! -----------------------
+
+Brownie,Isa,122211,10/01/2006,10/01/2007,Fait maison,chocolat;600;g;oeufs;4;;farine;200;g;beurre;250;g
+
+Soupe de légume,Bonne maman,157948,1/1/2015,21/12/2017,Usine,eau;50;L;pommes de terre;5;;carottes;3;;courgettes;4;
+
+Soupe de poisson,Bonne maman,24550,10/12/2016,10/06/2026,Usine,poisson;1000;g;eau;0.4;L
+
+Crêpes,Harrys,1702,14/12/2016,16/12/2016,Usine Harrys,oeufs;2;;farine;300;g;beurre;270;g
